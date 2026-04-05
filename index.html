@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Coptic Excel-style Table</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h1 { margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; }
+</style>
+</head>
+<body>
+<h1>Coptic Forms Table</h1>
+
+<table id="myTable">
+  <thead></thead>
+  <tbody></tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"></script>
+<script>
+// CSV parser
+function csvToArray(str, delimiter = ",") {
+  const lines = str.trim().split("\n");
+  const headers = lines[0].split(delimiter);
+  const rows = lines.slice(1).map(line => {
+    const values = line.split(delimiter);
+    let obj = {};
+    headers.forEach((header, i) => obj[header] = values[i] || "");
+    return obj;
+  });
+  return { headers, rows };
+}
+
+// Fetch CSV from GitHub Pages
+fetch('data.csv')
+  .then(response => response.text())
+  .then(text => {
+    const { headers, rows } = csvToArray(text);
+    
+    const thead = document.querySelector("#myTable thead");
+    const tbody = document.querySelector("#myTable tbody");
+
+    // Create table header
+    thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+
+    // Create table rows
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = headers.map(h => `<td>${row[h]}</td>`).join('');
+      tbody.appendChild(tr);
+    });
+
+    // Make table sortable
+    new simpleDatatables.DataTable("#myTable", {
+      searchable: true,
+      fixedHeight: false
+    });
+  });
+</script>
+</body>
+</html>
