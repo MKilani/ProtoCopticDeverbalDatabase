@@ -5,18 +5,66 @@
 <title>Coptic Excel-style Table</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  h1 { margin-bottom: 20px; }
-  table { width: 100%; border-collapse: collapse; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+    background: #f9f9f9;
+    color: #333;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+  }
+
+  .table-container {
+    overflow-x: auto;   /* horizontal scroll */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;  /* ensures scroll for many columns */
+  }
+
+  table th, table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+
+  table th {
+    background: #007acc;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  table tr:hover {
+    background-color: #f1f7ff;
+  }
+
+  .dataTables_wrapper {
+    width: 100%;
+  }
 </style>
 </head>
 <body>
 <h1>Coptic Forms Table</h1>
 
-<table id="myTable">
-  <thead></thead>
-  <tbody></tbody>
-</table>
+<div class="table-container">
+  <table id="myTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"></script>
 <script>
@@ -52,10 +100,10 @@ fetch('data.csv')
       tbody.appendChild(tr);
     });
 
-    // Make table sortable
+    // Make table sortable and show all rows
     new simpleDatatables.DataTable("#myTable", {
       searchable: true,
-      fixedHeight: false
+      perPage: rows.length  // display all rows
     });
   });
 </script>
