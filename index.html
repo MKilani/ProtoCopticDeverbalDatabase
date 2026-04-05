@@ -2,27 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Coptic Excel-style Table</title>
+<title>Coptic Linguistic Database</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
 <style>
+  /* --- Page layout --- */
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 30px;
-    background: #f9f9f9;
+    background: #fefcfb;
     color: #333;
+    padding: 30px;
+    line-height: 1.6;
   }
 
-  h1 {
+  header {
     text-align: center;
-    margin-bottom: 20px;
-    color: #1a1a1a;
+    margin-bottom: 30px;
   }
 
+  header h1 {
+    color: #3a5f7d;
+    margin-bottom: 5px;
+  }
+
+  header p {
+    font-style: italic;
+    color: #555;
+    margin-top: 0;
+  }
+
+  section {
+    margin-bottom: 30px;
+  }
+
+  h2 {
+    color: #3a5f7d;
+    margin-bottom: 10px;
+  }
+
+  /* --- Table container --- */
   .table-container {
-    overflow-x: auto;   /* horizontal scroll */
+    overflow-x: auto;
     border: 1px solid #ccc;
     border-radius: 8px;
-    background: #fff;
+    background: #fffaf0;
     padding: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   }
@@ -30,41 +52,81 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1200px;  /* ensures scroll for many columns */
+    min-width: 1400px; /* Ensure horizontal scroll for many columns */
   }
 
   table th, table td {
     padding: 8px 12px;
     border-bottom: 1px solid #eee;
     text-align: left;
+    white-space: nowrap;
   }
 
   table th {
-    background: #007acc;
-    color: white;
+    background: #a8dadc;
+    color: #1a1a1a;
     position: sticky;
     top: 0;
     z-index: 2;
   }
 
-  table tr:hover {
-    background-color: #f1f7ff;
+  table tr:nth-child(even) {
+    background-color: #f0f7f4; /* alternating pastel row color */
   }
 
-  .dataTables_wrapper {
-    width: 100%;
+  table tr:hover {
+    background-color: #f9f1f0;
   }
+
+  /* --- Paragraphs --- */
+  .intro, .column-explanations {
+    background: #f5f5f5;
+    padding: 15px 20px;
+    border-left: 5px solid #a8dadc;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+
 </style>
 </head>
 <body>
-<h1>Coptic Forms Table</h1>
 
-<div class="table-container">
+<header>
+  <h1>Coptic Linguistic Database</h1>
+  <p>Compiled by [Your Name], part of the "Coptic Forms Project" (2026)</p>
+</header>
+
+<section class="intro">
+  <h2>About This Database</h2>
+  <p>
+    This database presents a comprehensive collection of Coptic forms, their grammatical features, and interpretations. 
+    The data is primarily drawn from Crum's lexicon and Kilani (2026) studies. Users can explore the table, sort columns 
+    by any feature, and search for specific forms or roots. It aims to support linguistic research and comparative studies 
+    in Coptic morphology and semantics.
+  </p>
+</section>
+
+<section class="column-explanations">
+  <h2>Column Descriptions & Abbreviations</h2>
+  <p>
+    <strong>Dialect:</strong> Coptic dialect (Sahidic, Bohairic, etc.)<br>
+    <strong>Coptic Form:</strong> The form as written in Coptic script<br>
+    <strong>Coptic Transcription:</strong> Latin transliteration of the Coptic form<br>
+    <strong>Number, Gender:</strong> Grammatical number and gender<br>
+    <strong>Coptic Meaning (Crum):</strong> Meaning according to Crum's lexicon<br>
+    <strong>Class, Subclass, Property Type:</strong> Semantic/grammatical classification<br>
+    <strong>Literal Interpretation (Kilani 2026), Vocalic Pattern, Interpretation (Kilani 2026):</strong> Explanatory notes<br>
+    <strong>Suffix, Distinctive Vowel, Root ID, Pre-Coptic Root, Root Type:</strong> Morphological information<br>
+    <strong>TLA IS, TLA en, TLE de, TLA - date first attestation:</strong> Cross-linguistic references and attestation date
+  </p>
+</section>
+
+<section class="table-container">
   <table id="myTable">
     <thead></thead>
     <tbody></tbody>
   </table>
-</div>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"></script>
 <script>
@@ -81,31 +143,33 @@ function csvToArray(str, delimiter = ",") {
   return { headers, rows };
 }
 
-// Fetch CSV from GitHub Pages
-fetch('data.csv')
+// Cache-busting to always load latest CSV
+const csvFile = 'data.csv?v=' + new Date().getTime();
+
+fetch(csvFile)
   .then(response => response.text())
   .then(text => {
     const { headers, rows } = csvToArray(text);
-    
     const thead = document.querySelector("#myTable thead");
     const tbody = document.querySelector("#myTable tbody");
 
     // Create table header
     thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
 
-    // Create table rows
+    // Populate rows
     rows.forEach(row => {
       const tr = document.createElement('tr');
       tr.innerHTML = headers.map(h => `<td>${row[h]}</td>`).join('');
       tbody.appendChild(tr);
     });
 
-    // Make table sortable and show all rows
+    // Initialize DataTable (all rows shown)
     new simpleDatatables.DataTable("#myTable", {
       searchable: true,
-      perPage: rows.length  // display all rows
+      perPage: rows.length
     });
   });
 </script>
+
 </body>
 </html>
