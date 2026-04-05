@@ -5,7 +5,6 @@
 <title>Coptic Linguistic Database</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
 <style>
-  /* --- Page layout --- */
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #fefcfb;
@@ -39,7 +38,24 @@
     margin-bottom: 10px;
   }
 
-  /* --- Table container --- */
+  .intro, .column-explanations {
+    background: #f5f5f5;
+    padding: 15px 20px;
+    border-left: 5px solid #a8dadc;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+
+  .table-wrapper {
+    margin-top: 10px;
+  }
+
+  .search-container {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
   .table-container {
     overflow-x: auto;
     border: 1px solid #ccc;
@@ -52,7 +68,7 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1400px; /* Ensure horizontal scroll for many columns */
+    min-width: 1400px;
   }
 
   table th, table td {
@@ -71,22 +87,12 @@
   }
 
   table tr:nth-child(even) {
-    background-color: #f0f7f4; /* alternating pastel row color */
+    background-color: #f0f7f4;
   }
 
   table tr:hover {
     background-color: #f9f1f0;
   }
-
-  /* --- Paragraphs --- */
-  .intro, .column-explanations {
-    background: #f5f5f5;
-    padding: 15px 20px;
-    border-left: 5px solid #a8dadc;
-    border-radius: 6px;
-    margin-bottom: 20px;
-  }
-
 </style>
 </head>
 <body>
@@ -121,11 +127,14 @@
   </p>
 </section>
 
-<section class="table-container">
-  <table id="myTable">
-    <thead></thead>
-    <tbody></tbody>
-  </table>
+<section class="table-wrapper">
+  <div class="search-container" id="search-container"></div>
+  <div class="table-container">
+    <table id="myTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest"></script>
@@ -143,7 +152,7 @@ function csvToArray(str, delimiter = ",") {
   return { headers, rows };
 }
 
-// Cache-busting to always load latest CSV
+// Fetch CSV with cache-busting
 const csvFile = 'data.csv?v=' + new Date().getTime();
 
 fetch(csvFile)
@@ -153,21 +162,25 @@ fetch(csvFile)
     const thead = document.querySelector("#myTable thead");
     const tbody = document.querySelector("#myTable tbody");
 
-    // Create table header
+    // Build table header
     thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
 
-    // Populate rows
+    // Populate all rows
     rows.forEach(row => {
       const tr = document.createElement('tr');
       tr.innerHTML = headers.map(h => `<td>${row[h]}</td>`).join('');
       tbody.appendChild(tr);
     });
 
-    // Initialize DataTable (all rows shown)
-    new simpleDatatables.DataTable("#myTable", {
+    // Initialize DataTable
+    const dataTable = new simpleDatatables.DataTable("#myTable", {
       searchable: true,
-      perPage: rows.length
+      perPage: rows.length  // show ALL entries
     });
+
+    // Move search input outside scrollable table
+    const searchContainer = document.getElementById("search-container");
+    searchContainer.appendChild(dataTable.table.parentElement.parentElement.querySelector(".dataTable-input"));
   });
 </script>
 
