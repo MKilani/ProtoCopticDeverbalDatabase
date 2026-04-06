@@ -169,14 +169,7 @@ fetch('data.csv?v=' + new Date().getTime())
     });
 
     // Initialize table
-    const table = new simpleDatatables.DataTable("#myTable", {
-      searchable: false,
-      paging: false,          // removes "entries per page"
-      layout: {
-        top: "{search}",      // keep only search
-        bottom: ""            // remove footer
-      }
-    });
+    
 
     const table = new simpleDatatables.DataTable("#myTable", {
   searchable: false,
@@ -191,6 +184,8 @@ fetch('data.csv?v=' + new Date().getTime())
   document.getElementById("custom-search").addEventListener("input", function() {
     table.search(this.value);
   });
+
+});
     
 </script>
 
