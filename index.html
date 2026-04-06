@@ -127,7 +127,10 @@ tr:hover {
 </section>
 
 <section>
-  <div class="search-container" id="search-container"></div>
+  <div class="search-container">
+    <input type="text" id="custom-search" placeholder="Search..."
+           style="padding:6px 10px; width:250px; border:1px solid #ccc; border-radius:4px;">
+  </div>
 
   <div class="table-container">
     <table id="myTable">
@@ -167,7 +170,7 @@ fetch('data.csv?v=' + new Date().getTime())
 
     // Initialize table
     const table = new simpleDatatables.DataTable("#myTable", {
-      searchable: true,
+      searchable: false,
       paging: false,          // removes "entries per page"
       layout: {
         top: "{search}",      // keep only search
@@ -175,11 +178,20 @@ fetch('data.csv?v=' + new Date().getTime())
       }
     });
 
-    // Move search outside scroll area
-    const search = document.querySelector(".dataTable-top");
-    document.getElementById("search-container").appendChild(search);
-
+    const table = new simpleDatatables.DataTable("#myTable", {
+  searchable: false,
+  paging: false,
+  layout: {
+    top: "",
+    bottom: ""
+  }
   });
+
+  // Custom search
+  document.getElementById("custom-search").addEventListener("input", function() {
+    table.search(this.value);
+  });
+    
 </script>
 
 </body>
